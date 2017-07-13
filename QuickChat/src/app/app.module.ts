@@ -40,6 +40,7 @@ import {
 import { MainComponent } from './+main/main.component';
 import { SigninComponent } from './+signin/signin.component';
 import { MypostsComponent } from './+myposts/myposts.component';
+import { AuthService } from "app/services/auth.service";
 
 export const MaterialModules = [
   MdAutocompleteModule,
@@ -86,7 +87,9 @@ export const MaterialModules = [
     MaterialModules,
     FlexLayoutModule,
   ],
-  providers: [],
+  providers: [
+    AuthService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -4,7 +4,7 @@
       <span fxShow="false" fxShow.gt-xs="true">You must be signed in to use this app</span>
       <span fxShow="false" fxShow.xs="true">You must be signed in</span>
     </md-card-title>
-    <button id="google-button" md-button>
+    <button id="google-button" md-button (click)="authService.signInWithGoogle()">
     
     </button>
   </md-card>
