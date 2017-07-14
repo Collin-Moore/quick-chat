@@ -3,6 +3,15 @@
     <md-toolbar color="primary">
       Options
     </md-toolbar>
+    <md-nav-list>
+      <a md-list-item (click)="sidenav.toggle()" [routerLink]="['/']">
+      All posts</a>
+      <a md-list-item (click)="sidenav.toggle()" [routerLink]="['/myposts']">
+      My posts</a>
+      <hr>
+      <a md-list-item (click)="sidenav.toggle()">
+      Sign out</a>
+    </md-nav-list>
   </md-sidenav>
 
   <md-toolbar color="primary">
