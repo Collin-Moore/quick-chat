@@ -42,6 +42,9 @@ import { SigninComponent } from './+signin/signin.component';
 import { MypostsComponent } from './+myposts/myposts.component';
 import { AuthService } from "app/services/auth.service";
 import { AuthGuard } from "app/services/auth.guard";
+import { PostListComponent } from './post-list/post-list.component';
+import { PostComponent } from './post/post.component';
+import { CreatePostComponent } from './create-post/create-post.component';
 
 export const MaterialModules = [
   MdAutocompleteModule,
@@ -75,7 +78,10 @@ export const MaterialModules = [
     AppComponent,
     MainComponent,
     SigninComponent,
-    MypostsComponent
+    MypostsComponent,
+    PostListComponent,
+    PostComponent,
+    CreatePostComponent
   ],
   imports: [
     BrowserModule,
