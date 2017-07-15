@@ -45,6 +45,7 @@ import { AuthGuard } from "app/services/auth.guard";
 import { PostListComponent } from './post-list/post-list.component';
 import { PostComponent } from './post/post.component';
 import { CreatePostComponent } from './create-post/create-post.component';
+import { PostService } from "app/services/post.service";
 
 export const MaterialModules = [
   MdAutocompleteModule,
@@ -97,6 +98,7 @@ export const MaterialModules = [
   providers: [
     AuthService,
     AuthGuard,
+    PostService,
   ],
   bootstrap: [AppComponent]
 })
