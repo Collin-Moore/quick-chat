@@ -17,11 +17,11 @@ import * as firebase from 'firebase/app';
 export class PostService {
 
   readonly postsPath = "posts";
-  readonly postBatchSize = 4;
-
-  
+  readonly postBatchSize = 20;
   postWithAuthorStream: Observable<PostWithAuthor[]>;
   private postIncrementStream: Subject<number>;
+
+  public hideLoadMoreBtn = false;
 
   constructor(private db: AngularFireDatabase, private authorService: AuthorService) {
     this.postIncrementStream = new BehaviorSubject<number>(this.postBatchSize);
@@ -38,17 +38,15 @@ export class PostService {
         });
      });
 
-    this.postWithAuthorStream = Observable.combineLatest<PostWithAuthor[]>(postStream, this.authorService.authorMapStream,
-    (posts: Post[], authorMap: Map<string, Author>) => {
+    this.postWithAuthorStream = Observable.combineLatest<PostWithAuthor[]>(postStream, this.authorService.authorMapStream, numPostsStream,
+    (posts: Post[], authorMap: Map<string, Author>, numPostsRequested: number) => {
       const postsWithAuthor: PostWithAuthor[] = [];
-      console.log("Posts", posts);
-      console.log("Author map:", authorMap);
+      this.hideLoadMoreBtn = numPostsRequested > posts.length;
       for (let post of posts) {
         const postWithAuthor = new PostWithAuthor(post);
         postWithAuthor.author = authorMap[post.authorKey];
         postsWithAuthor.push(postWithAuthor);
       }
-      console.log("Combined posts with author", postsWithAuthor);
       return postsWithAuthor;
     });
   }
