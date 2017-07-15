@@ -1,6 +1,6 @@
 <md-card fxLayout="column" fxLayoutAlign="none stretch">
-<div *ngFor="let post of postService.postStream | async | reverse" >    
-<app-post [post]=post></app-post>
+<div *ngFor="let postWithAuthor of postService.postWithAuthorStream | async | reverse" >    
+<app-post [postWithAuthor]=postWithAuthor></app-post>
 <hr>
 </div>
 </md-card>
