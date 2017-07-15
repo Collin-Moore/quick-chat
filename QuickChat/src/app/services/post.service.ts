@@ -55,12 +55,16 @@ export class PostService {
   //   return this._postStream;
   // }
 
-  add(post: Post) {
+  add(post: Post): void  {
     console.log("Pushing the post", post);
     firebase.database().ref().child(this.postsPath).push(post);
   }
 
-  displayMorePosts() {
+  displayMorePosts(): void  {
     this.postIncrementStream.next(this.postBatchSize);
+  }
+
+  remove(keyToRemove: string): void {
+    firebase.database().ref(`${this.postsPath}/${keyToRemove}`).remove();
   }
 }
