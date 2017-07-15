@@ -12,6 +12,10 @@ export class PostService {
     this._postStream = this.db.list(this.postsPath);
   }
 
+  get postStream(): FirebaseListObservable<Post[]> {
+    return this._postStream;
+  }
+
   add(post: Post) {
     console.log("Pushing the post", post);
     this._postStream.push(post);

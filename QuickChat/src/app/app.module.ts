@@ -46,6 +46,7 @@ import { PostListComponent } from './post-list/post-list.component';
 import { PostComponent } from './post/post.component';
 import { CreatePostComponent } from './create-post/create-post.component';
 import { PostService } from "app/services/post.service";
+import { ReversePipe } from './pipes/reverse.pipe';
 
 export const MaterialModules = [
   MdAutocompleteModule,
@@ -82,7 +83,8 @@ export const MaterialModules = [
     MypostsComponent,
     PostListComponent,
     PostComponent,
-    CreatePostComponent
+    CreatePostComponent,
+    ReversePipe,
   ],
   imports: [
     BrowserModule,
