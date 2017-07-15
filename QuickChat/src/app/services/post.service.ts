@@ -12,6 +12,8 @@ import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import * as firebase from 'firebase/app';
+import { AuthService } from "app/services/auth.service";
+import { Query } from "angularfire2/interfaces";
 
 @Injectable()
 export class PostService {
@@ -20,21 +22,38 @@ export class PostService {
   readonly postBatchSize = 20;
   postWithAuthorStream: Observable<PostWithAuthor[]>;
   private postIncrementStream: Subject<number>;
+  private isMyPostsPageStream: Subject<boolean>;
+
 
   public hideLoadMoreBtn = false;
 
-  constructor(private db: AngularFireDatabase, private authorService: AuthorService) {
+  constructor(private db: AngularFireDatabase, private authorService: AuthorService, private authService: AuthService) {
     this.postIncrementStream = new BehaviorSubject<number>(this.postBatchSize);
+    this.isMyPostsPageStream = new BehaviorSubject<boolean>(false);
     const numPostsStream: Observable<number> = this.postIncrementStream.scan<number>((previousTotal: number, currentValue: number) => {
       return previousTotal + currentValue; 
      });
-
-    const postStream: Observable<Post[]> = numPostsStream.switchMap<number, Post[]>(
-      (numPosts: number) => {
+    
+    const queryStream: Observable<Query> = Observable.combineLatest<Query>(
+      numPostsStream,
+      this.isMyPostsPageStream,
+      (numPosts: number, isMyPostsPage: boolean) => {
+        if (isMyPostsPage) {
+          return {
+            orderByChild: 'authorKey',
+            equalTo: this.authService.currentUserUid,
+          };
+        } else {
+          return {
+            limitToLast: numPosts,
+          };
+        }
+      }
+    )
+    const postStream: Observable<Post[]> = queryStream.switchMap<Query, Post[]>(
+      (queryParameter: Query) => {
         return this.db.list(this.postsPath, {
-          query: {
-            limitToLast: numPosts
-          }
+          query: queryParameter
         });
      });
 
@@ -70,5 +89,9 @@ export class PostService {
 
   update(key: string, post: Post): void {
     firebase.database().ref(`${this.postsPath}/${key}`).set(post);
+  }
+
+  showOnlyMyPosts(isMyPostsPage: boolean): void {
+    this.isMyPostsPageStream.next(isMyPostsPage);
   }
 }
