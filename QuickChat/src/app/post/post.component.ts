@@ -20,6 +20,7 @@ export class PostComponent implements OnInit {
   @Input() postWithAuthor: PostWithAuthor;
 
   public editingMode: EditMode;
+  public updatedPostBody: string;
 
   constructor(private authService: AuthService, private postService: PostService, private snackBar: MdSnackBar) {
     this.editingMode = EditMode.notEditable;
@@ -32,7 +33,8 @@ export class PostComponent implements OnInit {
   }
 
   enableEditing(): void {
-    console.log("TODO: enable editing");
+    this.editingMode = EditMode.editing;
+    this.updatedPostBody = this.postWithAuthor.body;
   }
 
   remove(): void {
@@ -49,6 +51,20 @@ export class PostComponent implements OnInit {
         duration: 3000,
       });
     });
-}
+  }
+
+  save(): void {
+    console.log("TODO: Save the change to", this.updatedPostBody);
+    const updatedPost = new Post();
+    updatedPost.body = this.updatedPostBody;
+    updatedPost.authorKey = this.authService.currentUserUid;
+    this.postService.update(this.postWithAuthor.$key, updatedPost);
+    this.editingMode = EditMode.displayEditButtons;
+
+  }
+
+  cancel(): void {
+    this.editingMode = EditMode.displayEditButtons;
+  }
 
 }
