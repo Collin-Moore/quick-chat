@@ -4,6 +4,7 @@ import { AngularFireAuth } from "angularfire2/auth";
 import * as firebase from 'firebase/app';
 import { Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
+import { AuthorService } from "app/services/author.service";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
   public _currentUserUid: string;
 
   constructor(private afAuth: AngularFireAuth,
-  private router: Router) {
+  private router: Router,
+  private authorService: AuthorService) {
     this.afAuth.authState.subscribe( (user: firebase.User) => {
       if (user) {
         console.log("User is signed in as ", user);
@@ -56,8 +58,11 @@ export class AuthService {
 
    signInWithGoogle(): void {
      this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-     .then( (user: firebase.User) => { 
+     .then( (result: any) => { 
         this.router.navigate(['/']);
+        const user: firebase.User = result.user;
+        console.log("Push the user to the database", user);
+        this.authorService.updateAuthor(user.uid, user.displayName, user.photoURL);
       });
    }
 

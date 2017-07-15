@@ -47,6 +47,7 @@ import { PostComponent } from './post/post.component';
 import { CreatePostComponent } from './create-post/create-post.component';
 import { PostService } from "app/services/post.service";
 import { ReversePipe } from './pipes/reverse.pipe';
+import { AuthorService } from "app/services/author.service";
 
 export const MaterialModules = [
   MdAutocompleteModule,
@@ -101,6 +102,7 @@ export const MaterialModules = [
     AuthService,
     AuthGuard,
     PostService,
+    AuthorService,
   ],
   bootstrap: [AppComponent]
 })
