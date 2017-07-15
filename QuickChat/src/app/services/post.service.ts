@@ -4,20 +4,41 @@ import { AngularFireDatabase, FirebaseListObservable } from "angularfire2/databa
 import { Observable } from "rxjs/Observable";
 
 import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/scan';
 import { AuthorService } from "app/services/author.service";
 import { Author } from "app/models/author";
+import { Subject } from "rxjs/Subject";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
+
+import * as firebase from 'firebase/app';
 
 @Injectable()
 export class PostService {
 
   readonly postsPath = "posts";
-  private _postStream: FirebaseListObservable<Post[]>;
+  readonly postBatchSize = 4;
+
   
   postWithAuthorStream: Observable<PostWithAuthor[]>;
+  private postIncrementStream: Subject<number>;
 
   constructor(private db: AngularFireDatabase, private authorService: AuthorService) {
-    this._postStream = this.db.list(this.postsPath);
-    this.postWithAuthorStream = Observable.combineLatest<PostWithAuthor[]>(this._postStream, this.authorService.authorMapStream,
+    this.postIncrementStream = new BehaviorSubject<number>(this.postBatchSize);
+    const numPostsStream: Observable<number> = this.postIncrementStream.scan<number>((previousTotal: number, currentValue: number) => {
+      return previousTotal + currentValue; 
+     });
+
+    const postStream: Observable<Post[]> = numPostsStream.switchMap<number, Post[]>(
+      (numPosts: number) => {
+        return this.db.list(this.postsPath, {
+          query: {
+            limitToLast: numPosts
+          }
+        });
+     });
+
+    this.postWithAuthorStream = Observable.combineLatest<PostWithAuthor[]>(postStream, this.authorService.authorMapStream,
     (posts: Post[], authorMap: Map<string, Author>) => {
       const postsWithAuthor: PostWithAuthor[] = [];
       console.log("Posts", posts);
@@ -38,6 +59,10 @@ export class PostService {
 
   add(post: Post) {
     console.log("Pushing the post", post);
-    this._postStream.push(post);
+    firebase.database().ref().child(this.postsPath).push(post);
+  }
+
+  displayMorePosts() {
+    this.postIncrementStream.next(this.postBatchSize);
   }
 }
