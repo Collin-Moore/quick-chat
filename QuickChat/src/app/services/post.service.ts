@@ -19,7 +19,7 @@ import { Query } from "angularfire2/interfaces";
 export class PostService {
 
   readonly postsPath = "posts";
-  readonly postBatchSize = 20;
+  readonly postBatchSize = 10;
   postWithAuthorStream: Observable<PostWithAuthor[]>;
   private postIncrementStream: Subject<number>;
   private isMyPostsPageStream: Subject<boolean>;
@@ -61,6 +61,7 @@ export class PostService {
     (posts: Post[], authorMap: Map<string, Author>, numPostsRequested: number) => {
       const postsWithAuthor: PostWithAuthor[] = [];
       this.hideLoadMoreBtn = numPostsRequested > posts.length;
+      console.log("hideLoadMoreBtn ", this.hideLoadMoreBtn);
       for (let post of posts) {
         const postWithAuthor = new PostWithAuthor(post);
         postWithAuthor.author = authorMap[post.authorKey];
@@ -92,6 +93,7 @@ export class PostService {
   }
 
   showOnlyMyPosts(isMyPostsPage: boolean): void {
+    console.log("showOnlyMyPosts: ", isMyPostsPage);
     this.isMyPostsPageStream.next(isMyPostsPage);
   }
 }
