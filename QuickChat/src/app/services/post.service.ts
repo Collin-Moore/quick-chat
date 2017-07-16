@@ -22,7 +22,7 @@ export class PostService {
   readonly postBatchSize = 10;
   postWithAuthorStream: Observable<PostWithAuthor[]>;
   private postIncrementStream: Subject<number>;
-  private isMyPostsPageStream: Subject<boolean>;
+  public isMyPostsPageStream: Subject<boolean>;
 
 
   public hideLoadMoreBtn = false;
